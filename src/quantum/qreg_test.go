@@ -12,7 +12,8 @@
 //      See the License for the specific language governing permissions and
 //      limitations under the License.
 //
-// Author: conleyo@google.com (Conley Owens)
+// Authors: conleyo@google.com (Conley Owens),
+//          davinci@google.com (David Yonge-Mallo)
 
 package quantum
 
@@ -20,6 +21,38 @@ import (
 	"math"
 	"testing"
 )
+
+// Helper function for testing. Returns true if the amplitude for the given
+// basis state is set to 1, and all other amplitudes are set to 0.
+func verifyBasisState(qreg *QReg, basis int) bool {
+        for i, amplitude := range qreg.amplitudes {
+                if amplitude != complex(0, 0) && i != basis {
+                        return false
+                }
+        }
+        return qreg.amplitudes[basis] == complex(1, 0)
+}
+
+// Test the various forms of the constructor.
+func TestNewQReg(t *testing.T) {
+        // Test constructor that takes in no initial values.
+        qreg := NewQReg(4)
+        if !verifyBasisState(qreg, 0) {
+                t.Error("Expected |0000>.")
+        }
+
+        // Test constructor that takes in integer representation of basis state.
+        qreg = NewQReg(8, 3)
+        if !verifyBasisState(qreg, 3) {
+                t.Error("Expected |00000011>.")
+        }
+
+        // Test constructor that takes in binary representation of basis state.
+        qreg = NewQReg(5, 0, 1, 1, 0, 1)
+        if !verifyBasisState(qreg, 13) {
+                t.Error("Expected |01101>.")
+        }
+}
 
 func TestQRegBSet_1BitCollapsed(t *testing.T) {
 	qreg := NewQReg(1, 0)

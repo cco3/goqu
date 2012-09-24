@@ -12,7 +12,8 @@
 //      See the License for the specific language governing permissions and
 //      limitations under the License.
 //
-// Author: conleyo@google.com (Conley Owens)
+// Authors: conleyo@google.com (Conley Owens),
+//          davinci@google.com (David Yonge-Mallo)
 
 package quantum
 
@@ -39,9 +40,9 @@ type QReg struct {
 }
 
 // Constructor for a QReg
-func NewQReg(width int, value int) *QReg {
-	qreg := &QReg{width, make([]complex128, 1<<uint(qreg.width))}
-	qreg.Set(value)
+func NewQReg(width int, values ...int) *QReg {
+	qreg := &QReg{width, nil}
+	qreg.Set(values...)
 	return qreg
 }
 
@@ -74,18 +75,42 @@ func (qreg *QReg) BProb(index int, value int) float64 {
 	return prob
 }
 
-// Set the state of the QReg
-func (qreg *QReg) Set(value int) {
-	if value > 1<<uint(qreg.width) {
-		err_str := fmt.Sprintf("Value of %d is too large for QReg "+
-			"of width %d",
-			value, qreg.width)
-		panic(err_str)
-	}
-	for i, _ := range qreg.amplitudes {
-		qreg.amplitudes[i] = complex(0, 0)
-	}
-	qreg.amplitudes[value] = complex(1.0, 0)
+// Set the QReg to a state in the standard basis. If no value is given, default
+// to the all zero state. If one value is given, interpret it as the integer
+// representation of a basis state. If a series of binary values are given,
+// interpret them as the binary representation of a basis state.
+func (qreg *QReg) Set(values ...int) {
+        // The Hilbert space has dimension math.Pow(2,width).
+        hilbert_space_dim := 1<<uint(qreg.width)
+
+        qreg.amplitudes = make([]complex128, hilbert_space_dim)
+        if len(values) == 0 {
+                // Set to |0...0>.
+                qreg.amplitudes[0] = 1
+        } else if len(values) == 1 {
+                // Given an integer d, set to basis state |d>.
+                if values[0] < 0 || values[0] >= hilbert_space_dim {
+                        err_str := fmt.Sprintf("Value of %d is too large for " +
+                                "QReg of width %d.", values[0], qreg.width)
+                        panic(err_str)
+                }
+                qreg.amplitudes[values[0]] = 1
+        } else if len(values) == qreg.width {
+                // Given binary b_1, b_2, ..., b_k, set to basis state
+                // |b_1 b_2 ... b_k>.
+                basis_state_index := 0
+                for _, value := range values {
+                        basis_state_index <<= 1
+                        if value < 0 || value > 1 {
+                                panic("Expected 0 or 1 when setting value of " +
+                                        "quantum register.")
+                        }
+                        basis_state_index += value
+                }
+                qreg.amplitudes[basis_state_index] = 1
+        } else {
+                panic("Bad values for quantum register.")
+        }
 }
 
 // Set a particular bit in a QReg
