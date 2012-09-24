@@ -54,7 +54,7 @@ func HadamardRange(qreg *QReg, target_range_start int, target_range_end int) {
 }
 
 func HadamardReg(qreg *QReg) {
-	HadamardRange(qreg, 0, qreg.size)
+	HadamardRange(qreg, 0, qreg.width)
 }
 
 // Diffusion Gate
@@ -82,5 +82,5 @@ func DiffusionRange(qreg *QReg, target_range_start int, target_range_end int) {
 }
 
 func DiffusionReg(qreg *QReg) {
-	DiffusionRange(qreg, 0, qreg.size)
+	DiffusionRange(qreg, 0, qreg.width)
 }

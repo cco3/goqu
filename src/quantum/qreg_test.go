@@ -24,27 +24,27 @@ import (
 func TestQRegBSet_1BitCollapsed(t *testing.T) {
 	qreg := NewQReg(1, 0)
 	qreg.BSet(0, 1)
-	if qreg.states[0] != complex(0, 0) {
+	if qreg.amplitudes[0] != complex(0, 0) {
 		t.Errorf("Bad amplitude for state 0 = %+f, want 0",
-			qreg.states[0])
+			qreg.amplitudes[0])
 	}
-	if qreg.states[1] != complex(1, 0) {
+	if qreg.amplitudes[1] != complex(1, 0) {
 		t.Errorf("Bad amplitude for state 1 = %+f, want 1",
-			qreg.states[1])
+			qreg.amplitudes[1])
 	}
 }
 
 func TestQRegBSet_1BitEntangled(t *testing.T) {
 	qreg := NewQReg(2, 0)
-	qreg.states[0] = complex(1/math.Sqrt2, 0)
-	qreg.states[1] = complex(-1/math.Sqrt2, 0)
+	qreg.amplitudes[0] = complex(1/math.Sqrt2, 0)
+	qreg.amplitudes[1] = complex(-1/math.Sqrt2, 0)
 	qreg.BSet(0, 1)
-	if qreg.states[0] != complex(0, 0) {
+	if qreg.amplitudes[0] != complex(0, 0) {
 		t.Errorf("Bad amplitude for state 0 = %+f, want 0",
-			qreg.states[0])
+			qreg.amplitudes[0])
 	}
-	if qreg.states[1] != complex(-1, 0) {
+	if qreg.amplitudes[1] != complex(-1, 0) {
 		t.Errorf("Bad amplitude for state 1 = %+f, want -1",
-			qreg.states[1])
+			qreg.amplitudes[1])
 	}
 }

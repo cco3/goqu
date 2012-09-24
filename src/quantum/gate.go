@@ -140,10 +140,10 @@ type indexAmplitude struct {
 func (gate *Gate) computeRow(qreg *QReg, app int, row int, targets []int, c chan indexAmplitude) {
 	sum := complex128(complex(0, 0))
 	for col := 0; col < gate.width(); col++ {
-		index := stateIndexForTarget(app, col, qreg.size, targets)
-		sum += gate.get(row, col) * qreg.states[index]
+		index := stateIndexForTarget(app, col, qreg.width, targets)
+		sum += gate.get(row, col) * qreg.amplitudes[index]
 	}
-	index := stateIndexForTarget(app, row, qreg.size, targets)
+	index := stateIndexForTarget(app, row, qreg.width, targets)
 	c <- indexAmplitude{index, sum}
 }
 
@@ -152,13 +152,13 @@ func (gate *Gate) computeRow(qreg *QReg, app int, row int, targets []int, c chan
 func (gate *Gate) Apply(qreg *QReg, targets []int) {
 	// Verify that all the targets are valid
 	for _, target := range targets {
-		if target >= qreg.size {
+		if target >= qreg.width {
 			panic(fmt.Sprintf("%d is not a valid target", target))
 		}
 	}
 
-	num_apps := 1 << uint(qreg.size-len(targets))
-	new_states := make([]complex128, len(qreg.states))
+	num_apps := 1 << uint(qreg.width-len(targets))
+	new_states := make([]complex128, len(qreg.amplitudes))
 	// Each application of the matrix
 	// app is the binary representation of the non-target states
 	for app := 0; app < num_apps; app++ {
@@ -172,7 +172,7 @@ func (gate *Gate) Apply(qreg *QReg, targets []int) {
 			new_states[ia.index] = ia.amplitude
 		}
 	}
-	qreg.states = new_states
+	qreg.amplitudes = new_states
 }
 
 func (gate *Gate) ApplyRange(qreg *QReg, target_range_start int) {
