@@ -17,13 +17,13 @@
 package quantum
 
 import (
-	"cmath"
-	"math"
 	"fmt"
+	"math"
+	"math/cmplx"
 )
 
 func closeEnough(a complex128, b complex128) bool {
-	return math.Fabs(cmath.Abs(a)-cmath.Abs(b)) < .0000000001
+	return math.Abs(cmplx.Abs(a)-cmplx.Abs(b)) < .0000000001
 }
 
 type Gate struct {

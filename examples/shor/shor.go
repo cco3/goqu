@@ -21,7 +21,7 @@ import (
 	/*"math"*/
 	"os"
 	/*"quantum"*/
-	"rand"
+	"math/rand"
 )
 
 func gcd(a int, b int) int {

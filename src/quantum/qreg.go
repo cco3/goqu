@@ -17,15 +17,15 @@
 package quantum
 
 import (
-	"cmath"
 	"fmt"
 	"math"
-	"rand"
+        "math/cmplx"
+	"math/rand"
 	"time"
 )
 
 func init() {
-	rand.Seed(time.Nanoseconds())
+	rand.Seed(time.Now().UnixNano())
 }
 
 // Represents a quantum register
@@ -55,7 +55,7 @@ func (qreg *QReg) Copy() *QReg {
 
 // Get the probability of observing a state
 func (qreg *QReg) StateProb(state int) float64 {
-	return cmath.Abs(qreg.states[state] * qreg.states[state])
+	return cmplx.Abs(qreg.states[state] * qreg.states[state])
 }
 
 // Get the probability of observing a state for a specific bit
